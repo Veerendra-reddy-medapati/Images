@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>All Works</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .gallery img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<h2 style="text-align:center;">All Works</h2>
+<div class="gallery" id="gallery"></div>
+
+<script>
+const gallery = document.getElementById("gallery");
+
+fetch("images.json")
+  .then(res => res.json())
+  .then(data => {
+
+    data.forEach(item => {
+      const img = document.createElement("img");
+
+      img.dataset.src = item.url;
+      img.loading = "lazy";
+
+      gallery.appendChild(img);
+    });
+
+    lazyLoad();
+  });
+
+function lazyLoad() {
+  const images = document.querySelectorAll("img");
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        observer.unobserve(img);
+      }
+    });
+  });
+
+  images.forEach(img => observer.observe(img));
+}
+</script>
+
+</body>
+</html>
